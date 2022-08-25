@@ -1,7 +1,7 @@
+import fitz
+import fitz
 import os
 import csv
-from bs4 import BeautifulSoup
-import aspose.words as aw
 dir_list = os.listdir(os.getcwd())
 l=['nome', 'cpf', 'rs/pv', 'cargo']
 cpfs=[]
@@ -11,15 +11,14 @@ cargo=[]
 for file in dir_list:
      if '.pdf' in file:
           print(file)
-          doc = aw.Document(file)
-          doc.save("tmp.html")
-          with open("tmp.html", "r") as doc:
-                    soup = BeautifulSoup(doc, 'html.parser')
-                    lines = soup.prettify().replace('\n', '|').split(',')
+          with fitz.open(file) as doc:
+               for page in doc:
+                    lines = page.get_text().replace('\n', '|').split(',')
                     n=0
                     for item in lines:
                          ui = item.replace('\n', '').replace('RS/PV: ', '').replace('RS/', '').replace('CPF ','').replace('PV: ', '').strip()
-                         if n==0 or n==1:
+                         if n==0 or n==1 or n==2 or n==3:
+                              print(item)
                               n+=1
                          elif n==2:
                               s=ui.split('|')
